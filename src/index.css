@@ -1,0 +1,338 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.heading {
+    @apply text-center text-[24px] md:text-[30px] lg:text-4xl xl:text-5xl text-[#030712] font-bold
+}
+
+.heading2 {
+    @apply text-center text-[20px] md:text-2xl xl:text-3xl text-[#030712] font-bold
+}
+
+.description {
+    @apply text-sm md:text-[18px] text-[#03071299] w-full md:w-1/2 leading-[140%]
+}
+
+.card-description {
+    @apply text-[20px] text-[#030712CC]
+}
+
+.bus-container {
+    @apply max-w-[1320px] mx-auto px-8 md:px-2 lg:px-0 mt-16 md:mt-24 lg:mt-32
+}
+
+.section-gap {
+    @apply mt-14 md:mt-20 lg:mt-24
+}
+
+.button {
+    transition: transform 0.3s;
+    padding-top: 14px;
+    color: white;
+    background-color: #E67529;
+    padding-bottom: 14px;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 0.75rem;
+    border: 1px solid #E67529;
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.login-form {
+    .ant-row {
+        display: block;
+    }
+
+    .ant-form-item {
+        margin-bottom: 0;
+    }
+
+    .ant-form-item .ant-form-item-label {
+        text-align: left;
+        padding-bottom: 8px;
+    }
+
+    .ant-form-item .ant-form-item-label>label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
+        display: inline-block;
+        margin-inline-end: 4px;
+        color: #ff4d4f;
+        font-size: 14px;
+        font-family: SimSun, sans-serif;
+        line-height: 1;
+        content: "*";
+    }
+
+    .ant-form-item .ant-form-item-label>label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+        content: "";
+    }
+
+    .ant-form-item .ant-form-item-label>label {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        height: 7px;
+        color: rgba(0, 0, 0, 0.88);
+        font-size: 17px;
+    }
+
+    :focus {
+        border-color: #000000;
+        box-shadow: none;
+    }
+
+    /* Change hover border color to black for Ant Design input */
+    .ant-input:hover,
+    .ant-input-password:hover,
+    .ant-input-affix-wrapper:hover {
+        border-color: black !important;
+    }
+}
+
+.ticket-header {
+    @apply text-xl md:text-2xl capitalize font-semibold text-[#030712] border-dashed border-b border-black py-5
+}
+
+.seat {
+    @apply bg-[#E675291A] border border-primary h-10 w-14 md:h-10 md:w-20 lg:h-20 lg:w-40 rounded-md flex items-center justify-center
+}
+
+.seat-text {
+    @apply text-[#E67529] text-[16px] lg:text-2xl font-extrabold
+}
+
+.select-seat {
+    @apply bg-[#E675291A] border border-primary h-12 w-28 md:h-16 md:w-32 lg:h-20 lg:w-56 rounded-md flex items-center justify-center text-[#E67529] text-[16px] lg:text-2xl font-extrabold
+}
+
+/* Azhar's css  */
+.subHeading {
+    color: #E67529;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 120%;
+    text-transform: capitalize;
+}
+
+.para1 {
+    color: #534C4C;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+    text-transform: capitalize;
+}
+
+.para2 {
+    color: #2B2B2B;
+    text-align: justify;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+}
+
+/* buy tickets button */
+@keyframes pulse-scale {
+    0% {
+        transform: scale(0.95);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(0.95);
+    }
+}
+
+.animate-pulse-scale {
+    animation: pulse-scale 2s infinite 300ms;
+}
+
+
+/* FAQ component */
+.ant-collapse {
+    border: none;
+
+}
+
+.ant-collapse .ant-collapse-item:last-child {
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.ant-collapse>.ant-collapse-item:last-child {
+    border-radius: 4px 4px 4px 4px;
+}
+
+.ant-collapse .ant-collapse-content {
+    border-top: none;
+}
+
+.ant-input-outlined:hover {
+    border-color: none;
+    box-shadow: none;
+}
+
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+    color: #fff;
+    border-color: #E67529;
+    background: #E67529;
+}
+
+.ant-input-outlined:focus,
+:where(.css-dev-only-do-not-override-qnu6hi).ant-input-outlined:focus-within {
+    border-color: #E67529;
+}
+
+/* Swiper slider custom styles */
+.slider111 {
+
+    .swiper-button-prev,
+    .swiper-button-next {
+        position: absolute;
+        bottom: 0px;
+        margin-top: 180px;
+        width: 60px;
+        height: 60px;
+        z-index: 10;
+        cursor: pointer;
+        display: flex;
+        color: white;
+        background-color: #E67529;
+        flex-direction: row;
+        border-radius: 100%;
+        padding: 16px;
+    }
+
+    .swiper-button-prev:after,
+    .swiper-button-next:after {
+        font-size: 24px;
+    }
+
+    .swiper-button-next,
+    .swiper-rtl .swiper-button-prev {
+        right: 10px;
+        left: auto;
+    }
+
+    .swiper-button-prev,
+    .swiper-rtl .swiper-button-prev {
+        right: 85px;
+        left: auto;
+    }
+
+    /* Pagination styling */
+    .swiper-pagination {
+        margin-top: 90px;
+        position: static;
+        text-align: center;
+        transition: 300ms opacity;
+        transform: translate3d(0, 0, 0);
+        z-index: 10;
+    }
+
+    .swiper-pagination-bullet {
+        width: 15px;
+        height: 15px;
+    }
+
+    .swiper-pagination-bullet-active {
+        opacity: var(--swiper-pagination-bullet-opacity, 1);
+        background: #E67529 !important;
+        width: 40px;
+        height: 15px;
+        border-radius: 8px;
+    }
+
+    .swiper-horizontal>.swiper-pagination-bullets,
+    .swiper-pagination-bullets.swiper-pagination-horizontal {
+        left: 0;
+        width: 100%;
+    }
+
+    .swiper-pagination-bullet {
+        border: 2px solid #E67529;
+        background: #fff;
+    }
+
+    /* Responsive styles for smaller screens */
+    @media (max-width: 768px) {
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            width: 45px;
+            height: 45px;
+            margin-top: 210px;
+        }
+
+        .swiper-pagination {
+            margin-top: 10px;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            width: 35px;
+            height: 35px;
+            padding: 10px;
+        }
+
+        .swiper-button-prev:after,
+        .swiper-button-next:after {
+            font-size: 16px;
+        }
+
+        .swiper-button-prev,
+        .swiper-rtl .swiper-button-prev {
+            right: 55px;
+            left: auto;
+        }
+
+        .swiper-pagination {
+            margin-top: 5px;
+        }
+
+    }
+}
+
+
+/* dropdown */
+.custom-select {
+    appearance: none;
+    /* Remove default styling */
+    background: url('src/assets/arrow.svg') no-repeat right 5px center;
+    /* Add your custom arrow */
+    background-size: 20px;
+    /* Adjust size of the arrow */
+    padding-right: 30px;
+    font-size: medium;
+}
+
+.custom-select:hover {
+    cursor: pointer;
+    /* Change cursor on hover */
+}
+
+.auth-heading{
+    @apply text-3xl font-bold text-black text-center
+}
+
+.ant-otp {
+    @apply flex items-center mx-auto justify-center space-x-2
+}
+
+.ant-otp .ant-otp-input {
+    @apply text-center mx-auto !w-12 !h-7 p-2 md:p-4 lg:p-5 hover:!border-primary
+}
+.ant-otp-input{
+    @apply hover:!border-primary 
+}
