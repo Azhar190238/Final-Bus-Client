@@ -191,7 +191,7 @@ const AllService = () => {
                 if (!response.ok) throw new Error('Failed to fetch data');
                 const data = await response.json();
                 setServiceData(data);
-                setTicketPrice(data.price || 500); // Default price
+                setTicketPrice(data.price || 1000); // Default price
             } catch (error) {
                 console.error("Error fetching service data:", error);
                 setError('Failed to load service data.');
@@ -308,7 +308,7 @@ const AllService = () => {
                     </div>
                     <div className="bg-[#F7F8F8] rounded-2xl mt-10 px-8">
                         <div className="py-6 flex items-center justify-between border-b border-dashed border-[#03071233]">
-                            <p className="description">Route</p>
+                            <p className="description">Select Route</p>
                             <select className="custom-select !text-[#030712] !text-right p-2 border rounded-lg" value={selectedRoute} onChange={handleRouteChange}>
                                 {routes.map((route, index) => (
                                     <option key={index} value={route.routeName}>{route.routeName}</option>
