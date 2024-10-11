@@ -68,7 +68,7 @@ const Payment = () => {
     return (
         <div className="m-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {buses.map((bus) => (
+                {buses.map((bus)=> (
                     <div
                         key={bus._id}
                         className="border p-4 rounded shadow-lg cursor-pointer"
@@ -145,7 +145,7 @@ const Payment = () => {
                                 </thead>
                                 <tbody>
                                     {paymentHistory.map((history, busIndex) => (
-                                        history.allocatedSeat.map((seat) => (
+                                        history.allocatedSeat.map((seat)=> (
                                             <tr key={seat}>
                                                 <td className="border px-4 py-2">{seat}</td>
                                                 <td className="border px-4 py-2">
