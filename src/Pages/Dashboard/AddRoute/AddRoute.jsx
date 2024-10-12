@@ -1,9 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const AddRoute = () => {
     const [busName, setBusName] = useState('');
+    const [buses, setBuses] = useState([]); // State to hold bus names
     const [routes, setRoutes] = useState([{ routeName: '', price: '' }]);
+
+    // Fetch buses when the component mounts
+    useEffect(() => {
+        const fetchBuses = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/buses');
+                if (response.ok) {
+                    const data = await response.json();
+                    setBuses(data); // Assuming data is an array of buses
+                } else {
+                    console.error('Failed to fetch buses:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching buses:', error);
+            }
+        };
+
+        fetchBuses();
+    }, []);
 
     const handleBusNameChange = (e) => {
         setBusName(e.target.value);
@@ -85,14 +105,20 @@ const AddRoute = () => {
                     <label htmlFor="busName" className="block mb-1">
                         Bus Name:
                     </label>
-                    <input
-                        type="text"
+                    <select
                         id="busName"
                         value={busName}
                         onChange={handleBusNameChange}
                         className="border border-primary rounded px-4 py-3 w-full"
                         required
-                    />
+                    >
+                        <option value="">Select a bus</option>
+                        {buses.map((bus) => (
+                            <option key={bus.id} value={bus.busName}>
+                                {bus.busName}  {/* Make sure bus.name matches your data structure */}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <h3 className="text-lg font-semibold">Routes</h3>

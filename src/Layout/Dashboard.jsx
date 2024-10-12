@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBook, FaHome,  FaUser, FaUsers,  FaBars, FaTimes, FaBus } from "react-icons/fa";
+import { FaHome,  FaUser, FaUsers,  FaBars, FaTimes, FaBus, FaRoute } from "react-icons/fa";
 import { GiBus, GiPoliceOfficerHead } from "react-icons/gi";
 import { NavLink, Outlet } from "react-router-dom";
 import { FaMoneyCheckAlt } from "react-icons/fa";
@@ -17,11 +17,13 @@ const Dashboard = () => {
         { to: '/dashboard/profile', label: 'Profile', icon: FaUser },
         { to: '/dashboard/addBus', label: 'Add A Bus', icon: FaBus  },
         { to: '/dashboard/manageBus', label: 'Manage Bus', icon: GiBus },
-        { to: '/dashboard/addRoute', label: 'Add Route', icon: FaBook },
-        { to: '/dashboard/routeManage', label: 'Route Management', icon: FaBook },
+        { to: '/dashboard/addRoute', label: 'Add Route', icon: FaRoute },
+        { to: '/dashboard/routeManage', label: 'Route Management', icon: FaRoute },
         { to: '/dashboard/allUsers', label: 'All Users Management', icon: FaUsers },
         { to: '/dashboard/allMaster', label: 'All Master Management', icon: GiPoliceOfficerHead },
         { to: '/dashboard/payment', label: 'Payment', icon: FaMoneyCheckAlt },
+        { to: '/dashboard/masterPayment', label: "Counter Master's Payment", icon: FaMoneyCheckAlt },
+
         { to: '/', label: 'Home', icon: FaHome },
     ];
 

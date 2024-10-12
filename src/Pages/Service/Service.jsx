@@ -23,6 +23,7 @@ const Service = ({ seatPrice, busName }) => {
     const [allocatedSeats, setAllocatedSeats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [role, setRole] = useState(null);
 
     const leftSeats = [
         'A1', 'A2',
@@ -93,13 +94,12 @@ const Service = ({ seatPrice, busName }) => {
                 const response = await axios.get(`http://localhost:5000/allocated-seats/${busName}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // Add Authorization header
+                        'Authorization': `Bearer ${token}`
                     },
                 });
 
-                // Check if the response data is an array
                 if (Array.isArray(response.data)) {
-                    const seats = response.data.map(item => item.allocatedSeat).flat(); // Extract and flatten seat arrays
+                    const seats = response.data.map(item => item.allocatedSeat).flat();
                     setAllocatedSeats(seats);
                 } else {
                     setError('Unexpected response format.');
@@ -107,12 +107,33 @@ const Service = ({ seatPrice, busName }) => {
 
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching paid seats:', error); // Log error details
+                console.error('Error fetching paid seats:', error);
                 setError('Failed to load allocated seats.');
                 setLoading(false);
             }
         };
 
+        const fetchUserRole = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    // If no token, don't make the request and keep the role as null
+                    return;
+                }
+
+                const response = await axios.get('http://localhost:5000/user-role', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setRole(response.data.role); // Set the user's role
+            } catch (error) {
+                console.error('Error fetching user role:', error);
+                // Set role to null in case of error or failed login
+                setRole(null);
+            }
+        };
+        fetchUserRole();
         fetchPaidSeats();
     }, [busName]);
 
@@ -211,7 +232,7 @@ const Service = ({ seatPrice, busName }) => {
                                 <button
                                     key={index}
                                     onClick={() => handleClick(seat)}
-                                    disabled={allocatedSeats.includes(seat)} // Disable the button if seat is allocated
+                                    disabled={allocatedSeats.includes(seat)}
                                     className={`seat seat-text ${activeSeats.includes(seat) ? '!bg-primary !text-white' : ''} ${allocatedSeats.includes(seat) ? '!bg-gray-300 !cursor-not-allowed !border-4 border-red-500' : ''}`}
                                 >
                                     {seat}
@@ -238,22 +259,26 @@ const Service = ({ seatPrice, busName }) => {
                                 <p className="description !text-[#030712]">Total</p>
                                 <p className="description !text-[#030712] !text-right">{totalPrice} BDT</p>
                             </div>
-                            <div className="flex items-center">
-                                <input
-                                    className="w-full bg-white text-black p-4 border rounded-l-xl"
-                                    placeholder="Enter Discount price"
-                                    type="number"
-                                    value={inputValue}
-                                    onChange={handleChange}
-                                />
-                                <button
-                                    className={`p-4 bg-primary text-white rounded-r-xl ${!inputValue ? 'opacity-40 cursor-not-allowed' : ''}`}
-                                    onClick={applyDiscount}
-                                    disabled={!inputValue}
-                                >
-                                    Apply
-                                </button>
-                            </div>
+
+                            {role === 'admin' || role === 'master' ? (
+                                <div className="flex items-center">
+                                    <input
+                                        className="w-full bg-white text-black p-4 border rounded-l-xl"
+                                        placeholder="Enter Discount price"
+                                        type="number"
+                                        value={inputValue}
+                                        onChange={handleChange}
+                                    />
+                                    <button
+                                        className={`p-4 bg-primary text-white rounded-r-xl ${!inputValue ? 'opacity-40 cursor-not-allowed' : ''}`}
+                                        onClick={applyDiscount}
+                                        disabled={!inputValue}
+                                    >
+                                        Apply
+                                    </button>
+                                </div>
+                            ) : null}
+
                             {/* Grand Total */}
                             <div className="py-6 flex items-center justify-between">
                                 <p className="description !text-[#030712]">Grand Total</p>

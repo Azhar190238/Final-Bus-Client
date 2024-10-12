@@ -36,14 +36,14 @@ const LatestService = () => {
     }
 
     return (
-        <section className='bus-container'>
+        <section id='9000' className='bus-container'>
             <SectionHeader
                 heading="BRTC Bus Service"
                 description="BRTC Paribahan delivers reliable bus services with a focus on comfort and safety, ensuring seamless travel to your destinations"
             />
             <div className='section-gap'>
                 {serviceData.length === 2 ? (
-                    <div className='flex flex-col md:flex-row w-full gap-10'>
+                    <div id='999' className='flex flex-col md:flex-row w-full gap-10'>
                         {serviceData.map((service) => (
                             <ServiceCard
                                 key={service._id}
@@ -56,7 +56,7 @@ const LatestService = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-20 w-full gap-8'>
+                    <div id='999' className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-20 w-full gap-8'>
                         {serviceData.map((service) => (
                             <ServiceCard
                                 key={service._id}

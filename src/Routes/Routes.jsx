@@ -26,6 +26,7 @@ import RouteManage from "../Pages/Dashboard/RouteManage/RouteManage";
 import ManageBus from "../Pages/Dashboard/ManageBus/ManageBus";
 import Profile from "../Pages/Dashboard/Profile/Profile";
 import Payment from "../Pages/Dashboard/Payment/Payment";
+import CounterPayment from "../Pages/Dashboard/CounterPayment/CounterPayment";
 
 export const router = createBrowserRouter([
   {
@@ -120,5 +121,10 @@ export const router = createBrowserRouter([
         path: 'payment',
         element: <Payment/>
       },
+      {
+        path: 'masterPayment',
+        element: <CounterPayment/>
+      },
+      
     ]
   }])

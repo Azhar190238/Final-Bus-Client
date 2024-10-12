@@ -72,6 +72,7 @@ const RouteManage = () => {
     };
 
     // Handle route deletion
+    // Handle route deletion
     const handleDelete = (busId, routeIndex) => {
         Swal.fire({
             title: 'Are you sure?',
@@ -90,30 +91,51 @@ const RouteManage = () => {
                         'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token in headers
                     }
                 })
-                .then((res) => {
-                    if (!res.ok) {
-                        throw new Error('Failed to delete the route');
-                    }
-                    return res.json();
-                })
-                .then((data) => {
-                    if (data.deletedCount > 0) {
-                        Swal.fire('Deleted!', 'The route has been deleted.', 'success');
-                        // Refresh the bus data to reflect the deletion
-                        setBuses((prevBuses) => prevBuses.map(bus => {
-                            if (bus._id === busId) {
-                                return { ...bus, routes: bus.routes.filter((_, i) => i !== routeIndex) };
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error('Failed to delete the route');
+                        }
+                        return res.json();
+                    })
+                    .then((data) => {
+                        if (data.deletedCount > 0) {
+                            // Check if there are still routes left for the bus
+                            const remainingRoutes = buses.find(bus => bus._id === busId).routes.length - 1;
+
+                            if (remainingRoutes === 0) {
+                                // Delete the bus if there are no remaining routes
+                                return fetch(`http://localhost:5000/buses/${busId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token in headers
+                                    }
+                                });
+                            } else {
+                                // Update local state to remove the deleted route
+                                setBuses((prevBuses) => prevBuses.map(bus => {
+                                    if (bus._id === busId) {
+                                        return { ...bus, routes: bus.routes.filter((_, i) => i !== routeIndex) };
+                                    }
+                                    return bus;
+                                }));
+                                Swal.fire('Deleted!', 'The route has been deleted.', 'success');
                             }
-                            return bus;
-                        }));
-                    } else {
-                        Swal.fire('Error!', 'No route was deleted. Please try again.', 'error');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error deleting the route:', error);
-                    Swal.fire('Error!', 'Unable to delete the route.', 'error');
-                });
+                        } else {
+                            Swal.fire('Error!', 'No route was deleted. Please try again.', 'error');
+                        }
+                    })
+                    .then((res) => {
+                        // Check if bus deletion response is successful
+                        if (res && res.ok) {
+                            Swal.fire('Deleted!', 'The bus has been deleted as it has no routes left.', 'success');
+                            // Update state to remove the bus from local state
+                            setBuses(prevBuses => prevBuses.filter(bus => bus._id !== busId));
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error deleting the route:', error);
+                        Swal.fire('Error!', 'Unable to delete the route.', 'error');
+                    });
             }
         });
     };

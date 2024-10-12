@@ -48,6 +48,13 @@ const Navbar = () => {
       </div>
     ));
 
+    const scrollToDiv = () => {
+      const element = document.getElementById('999');
+      if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+      }
+  };
+
   return (
     <nav className="fixed top-0 w-full h-fit z-20 pt-2 bg-[#fff]">
       <div className="max-w-[1320px] mx-auto  px-4  flex items-center justify-between">
@@ -60,7 +67,7 @@ const Navbar = () => {
         </a>
 
         <div className="lg:hidden absolute left-1/2 transform -translate-x-1/2 ml-8">
-          <button className="border-2 border-[#E67529]  animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary transition">
+          <button onClick={scrollToDiv} className="border-2 border-[#E67529]  animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary transition">
             Buy Tickets
           </button>
         </div>
@@ -87,7 +94,7 @@ const Navbar = () => {
             <AuthButton />
           </div>
           <div className="hidden lg:flex relative justify-center lg:justify-end">
-            <button
+            <button onClick={scrollToDiv}
               className="border-2 border-[#E67529] animate-pulse-scale  px-4 md:px-8 py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary"
             >
               Buy Tickets
