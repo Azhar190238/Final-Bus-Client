@@ -8,6 +8,10 @@ const RouteManage = () => {
     const [editingRoute, setEditingRoute] = useState(null);
     const [formData, setFormData] = useState({ routeName: '', price: '' });
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5; // You can change this to show more/less items per page
+
     // Fetch the data from the API
     useEffect(() => {
         const fetchBusData = async () => {
@@ -29,6 +33,11 @@ const RouteManage = () => {
         };
         fetchBusData();
     }, []);
+
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentBuses = buses.slice(indexOfFirstItem, indexOfLastItem);
 
     // Handle updating a route
     const handleUpdate = async () => {
@@ -71,7 +80,6 @@ const RouteManage = () => {
         }
     };
 
-    // Handle route deletion
     // Handle route deletion
     const handleDelete = (busId, routeIndex) => {
         Swal.fire({
@@ -147,6 +155,16 @@ const RouteManage = () => {
         setShowModal(true);
     };
 
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Pagination buttons
+    const totalPages = Math.ceil(buses.length / itemsPerPage);
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+
     return (
         <div className="max-w-[1020px] mx-auto mt-16">
             <h1 className="text-3xl md:text-5xl text-center text-primary mb-6">Bus Routes</h1>
@@ -154,85 +172,115 @@ const RouteManage = () => {
             {buses.length === 0 ? (
                 <p className="text-center">Loading...</p>
             ) : (
-                <table className="table-auto w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border px-4 py-2">Bus Name</th>
-                            <th className="border px-4 py-2">Routes</th>
-                            <th className="border px-4 py-2">Price</th>
-                            <th className="border px-4 py-2">Update</th>
-                            <th className="border px-4 py-2">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {buses.map((bus) => (
-                            bus.routes.map((route, routeIndex) => (
-                                <tr key={`${bus._id}-${routeIndex}`} className="border-b">
-                                    {routeIndex === 0 && (
-                                        <td
-                                            className="border px-4 py-2 text-center"
-                                            rowSpan={bus.routes.length} // Span across multiple rows for the same bus
-                                        >
-                                            {bus.busName}
+                <>
+                    <table className="table-auto w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border px-4 py-2">Bus Name</th>
+                                <th className="border px-4 py-2">Routes</th>
+                                <th className="border px-4 py-2">Price</th>
+                                <th className="border px-4 py-2">Update</th>
+                                <th className="border px-4 py-2">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentBuses.map((bus) =>
+                                bus.routes.map((route, routeIndex) => (
+                                    <tr key={`${bus._id}-${routeIndex}`} className="border-b">
+                                        {routeIndex === 0 && (
+                                            <td
+                                                className="border px-4 py-2 text-center"
+                                                rowSpan={bus.routes.length} // Span across multiple rows for the same bus
+                                            >
+                                                {bus.busName}
+                                            </td>
+                                        )}
+                                        <td className="border px-4 py-2">{route.routeName}</td>
+                                        <td className="border px-4 py-2">{route.price}</td>
+                                        <td className="border px-4 py-2 text-center">
+                                            <button
+                                                onClick={() => openModal(bus._id, routeIndex, route)}
+                                                className="text-blue-500 hover:text-blue-700"
+                                            >
+                                                <FaEdit /> {/* Update icon */}
+                                            </button>
                                         </td>
-                                    )}
-                                    <td className="border px-4 py-2">{route.routeName}</td>
-                                    <td className="border px-4 py-2">{route.price}</td>
-                                    <td className="border px-4 py-2 text-center">
-                                        <button
-                                            onClick={() => openModal(bus._id, routeIndex, route)}
-                                            className="text-blue-500 hover:text-blue-700"
-                                        >
-                                            <FaEdit /> {/* Update icon */}
-                                        </button>
-                                    </td>
-                                    <td className="border px-4 py-2 text-center">
-                                        <button
-                                            onClick={() => handleDelete(bus._id, routeIndex)}
-                                            className="text-red-500 hover:text-red-700"
-                                        >
-                                            <FaTrashAlt /> {/* Delete icon */}
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
+                                        <td className="border px-4 py-2 text-center">
+                                            <button
+                                                onClick={() => handleDelete(bus._id, routeIndex)}
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                <FaTrashAlt /> {/* Delete icon */}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+
+                    {/* Pagination controls */}
+                    <div className="flex justify-center mt-4">
+                        {pageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => paginate(number)}
+                                className={`mx-1 px-3 py-2 ${currentPage === number ? 'bg-primary text-white' : 'bg-gray-200 text-black'}`}
+                            >
+                                {number}
+                            </button>
                         ))}
-                    </tbody>
-                </table>
+                    </div>
+                </>
             )}
 
+            {/* Update modal */}
             {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
-                    <div className="bg-white p-6 rounded shadow-md w-96">
-                        <h2 className="text-xl mb-4">Update Route</h2>
-                        <label className="block mb-2">Route Name:</label>
-                        <input
-                            type="text"
-                            value={formData.routeName}
-                            onChange={(e) => setFormData({ ...formData, routeName: e.target.value })}
-                            className="border p-2 w-full mb-4"
-                        />
-                        <label className="block mb-2">Price:</label>
-                        <input
-                            type="text"
-                            value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                            className="border p-2 w-full mb-4"
-                        />
-                        <div className="flex justify-between">
-                            <button
-                                onClick={handleUpdate}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                            >
-                                Update
-                            </button>
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+                    <div className="bg-white p-6 rounded-md">
+                        <h2 className="text-2xl mb-4">Update Route</h2>
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleUpdate();
+                            }}
+                        >
+                            <div className="mb-4">
+                                <label className="block mb-1">Route Name:</label>
+                                <input
+                                    type="text"
+                                    value={formData.routeName}
+                                    onChange={(e) => setFormData({ ...formData, routeName: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block mb-1">Price:</label>
+                                <input
+                                    type="number"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    className="mr-4 px-4 py-2 bg-gray-300 text-black rounded-md"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                                >
+                                    Update
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

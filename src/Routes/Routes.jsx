@@ -122,9 +122,8 @@ export const router = createBrowserRouter([
         element: <Payment/>
       },
       {
-        path: 'masterPayment',
+        path: 'counterPayment',
         element: <CounterPayment/>
       },
-      
     ]
   }])

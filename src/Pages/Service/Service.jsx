@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { TbArmchair } from "react-icons/tb";
 import { GiBusDoors } from "react-icons/gi";
 import { LuChevronUpCircle } from "react-icons/lu";
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { Form, Input } from "antd";
+import { Form, Input, Select } from "antd";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +23,8 @@ const Service = ({ seatPrice, busName }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [role, setRole] = useState(null);
+    const [masterUsers, setMasterUsers] = useState([]);
+    const [selectedMaster, setSelectedMaster] = useState(null);
 
     const leftSeats = [
         'A1', 'A2',
@@ -53,6 +54,7 @@ const Service = ({ seatPrice, busName }) => {
     const handleChange = (e) => {
         setInputValue(e.target.value);
     };
+
 
     const handleClick = (value) => {
         if (activeSeats.includes(value)) {
@@ -84,7 +86,8 @@ const Service = ({ seatPrice, busName }) => {
         location: location,
         address: address,
         email: email,
-        busName: busName
+        busName: busName,
+        counterMaster: selectedMaster
     };
 
     useEffect(() => {
@@ -133,6 +136,23 @@ const Service = ({ seatPrice, busName }) => {
                 setRole(null);
             }
         };
+
+        const fetchMasterUsers = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:5000/master-users', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setMasterUsers(response.data);  // Set the fetched users
+            } catch (error) {
+                console.error('Error fetching master users:', error);
+            } finally {
+                setLoading(false);  // Stop loading
+            }
+        };
+        fetchMasterUsers();
         fetchUserRole();
         fetchPaidSeats();
     }, [busName]);
@@ -322,6 +342,28 @@ const Service = ({ seatPrice, busName }) => {
                                 >
                                     <Input onChange={(e) => setAddress(e.target.value)} placeholder='Input your Address' type="text" className="p-4" />
                                 </Form.Item>
+
+                                <Form.Item
+                                    label="Select Master: "
+                                    name="master"
+                                >
+                                    <Select
+                                        loading={loading}
+                                        placeholder="Select a Master"
+                                        onChange={(value) => {
+                                            const selectedUser = masterUsers.find(user => user._id === value);
+                                            setSelectedMaster(selectedUser ? selectedUser.name : '');
+                                        }}
+                                        allowClear
+                                    >
+                                        {masterUsers.map((user) => (
+                                            <Select.Option key={user._id} value={user._id}>
+                                                {user.name}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+
                                 <button type="submit" className="button w-full !mt-10 !rounded-md">Continue</button>
                             </Form>
                         </div>

@@ -136,6 +136,7 @@ const Payment = () => {
                                     <th className="px-4 py-2">Name</th>
                                     <th className="px-4 py-2">Phone</th>
                                     <th className="px-4 py-2">Counter</th>
+                                    <th className="px-4 py-2">Reference</th>
                                     <th className="px-4 py-2">Email</th>
                                     <th className="px-4 py-2">Action</th> {/* Add Action column */}
                                 </tr>
@@ -154,6 +155,7 @@ const Payment = () => {
                                             <td className="border px-4 py-2">{history.name}</td>
                                             <td className="border px-4 py-2">{history.phone}</td>
                                             <td className="border px-4 py-2">{history.location}</td>
+                                            <td className="border px-4 py-2">{history.counterMaster}</td>
                                             <td className="border px-4 py-2">{history.email}</td>
                                             <td className="border px-4 py-2">
                                                 <button

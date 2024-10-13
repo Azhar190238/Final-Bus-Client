@@ -51,20 +51,20 @@ const AllMaster = () => {
                         'Authorization': `Bearer ${token}`
                     },
                 })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.message === 'User deleted successfully') {
-                        Swal.fire("Deleted!", `${user.name} has been deleted.`, "success");
-                        // Update the state to remove the deleted user from the list
-                        setUsers(prevUsers => prevUsers.filter(u => u._id !== user._id));
-                    } else {
-                        Swal.fire("Error!", "Failed to delete the user.", "error");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error deleting user:", error);
-                    Swal.fire("Error!", "An error occurred while deleting the user.", "error");
-                });
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.message === 'User deleted successfully') {
+                            Swal.fire("Deleted!", `${user.name} has been deleted.`, "success");
+                            // Update the state to remove the deleted user from the list
+                            setUsers(prevUsers => prevUsers.filter(u => u._id !== user._id));
+                        } else {
+                            Swal.fire("Error!", "Failed to delete the user.", "error");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error deleting user:", error);
+                        Swal.fire("Error!", "An error occurred while deleting the user.", "error");
+                    });
             }
         });
     };
@@ -116,6 +116,45 @@ const AllMaster = () => {
             });
     };
 
+    //handle approved counter master status is approved
+    const handleApprove = (user) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You are about to approve ${user.name}.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, approve it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const token = localStorage.getItem('token');
+                fetch(`http://localhost:5000/users/${user._id}/approve`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((result) => {
+                        if (result.success) {
+                            Swal.fire('Approved!', `${user.name} has been approved.`, 'success');
+                            setUsers((prevUsers) => prevUsers.map(u =>
+                                u._id === user._id ? { ...u, status: 'approved' } : u
+                            ));
+                        } else {
+                            Swal.fire('Error!', 'Failed to approve the user.', 'error');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error approving user:', error);
+                        Swal.fire('Error!', 'An error occurred while approving the user.', 'error');
+                    });
+            }
+        });
+    };
+
     const memberUsers = users.filter((user) => user.role === "master");
 
     // Pagination logic
@@ -143,8 +182,9 @@ const AllMaster = () => {
                                 <th className="px-4 py-2">Sl No</th>
                                 <th className="px-4 py-2">Name</th>
                                 <th className="px-4 py-2">Phone Number</th>
-                                <th className="px-4 py-2">Location</th>
+                                <th className="px-4 py-2">Counter</th>
                                 <th className="px-4 py-2">Role</th>
+                                <th className="px-4 py-2">Status</th>
                                 <th className="px-4 py-2">Update</th>
                                 <th className="px-4 py-2">Delete</th>
                             </tr>
@@ -157,6 +197,16 @@ const AllMaster = () => {
                                     <td className="px-4 py-2">{user.phone}</td>
                                     <td className="px-4 py-2">{user.location}</td>
                                     <td className="px-4 py-2">{user.role}</td>
+                                    <td className="px-4 py-2">
+                                        {user.status !== 'approved' ? (
+                                            <button
+                                                className="px-3 py-2 rounded-lg bg-primary text-white"
+                                                onClick={() => handleApprove(user)}
+                                            >
+                                                Approve
+                                            </button>
+                                        ) : user.status === 'approved' ? 'Approved' : ''}
+                                    </td>
                                     <td className="pl-8 py-2">
                                         <button onClick={() => handleOpenModal(user)} className="text-blue-600">
                                             <MdOutlineSystemUpdateAlt className="text-xl text-primary" />
@@ -179,9 +229,8 @@ const AllMaster = () => {
                         <button
                             key={index + 1}
                             onClick={() => setCurrentPage(index + 1)}
-                            className={`mx-1 px-3 py-1 rounded ${
-                                currentPage === index + 1 ? "bg-primary text-white" : "bg-gray-300 text-black"
-                            }`}
+                            className={`mx-1 px-3 py-1 rounded ${currentPage === index + 1 ? "bg-primary text-white" : "bg-gray-300 text-black"
+                                }`}
                         >
                             {index + 1}
                         </button>

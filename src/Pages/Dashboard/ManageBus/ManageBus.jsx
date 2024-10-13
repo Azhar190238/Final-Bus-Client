@@ -79,13 +79,12 @@ const ManageBus = () => {
         }
     };
 
-    // Handle showing modal and selecting bus to update
     const handleUpdate = (bus) => {
         setSelectedBus(bus);
-        setShowModal(true); // Show modal
+        setShowModal(true); // 
     };
 
-    // Handle form submission to update bus details
+
     const handleUpdateSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');

@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
+import logo from '../../../assets/logo.png'
 import { FaFacebook, FaLinkedin, FaPhoneAlt, FaEnvelope, FaYoutube } from 'react-icons/fa';
 import { FiPhoneCall } from 'react-icons/fi';
 import { IoHomeOutline } from "react-icons/io5";
@@ -12,13 +13,7 @@ const Footer = () => {
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20'>
                     <div className='w-full'>
                         <div className="flex items-center">
-                            <a className='mx-auto' href="/">
-                                <img
-                                    src="/src/assets/logo.png"
-                                    alt="logoImage"
-                                    className="w-28 h-28 bg-primary rounded-full p-1"
-                                />
-                            </a>
+                            <img className=' mx-auto rounded-full w-32 h-32 border' src={logo} alt='logo'  />
                         </div>
                         <p className='mt-[10px]  font-normal text-[16px] text-center text-[#2B2B2B]'>A straightforward platform for seamless bus ticket booking</p>
                         <div className="flex justify-center gap-6 mt-[20px] w-full">

@@ -4,7 +4,6 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Keyboard, Pagination, Navigation, Autoplay } from 'swiper/modules';
 
-
 const slidesData = [
     {
         id: 1,
@@ -32,12 +31,6 @@ const slidesData = [
     },
 
 ];
-const scrollToDiv = () => {
-    const element = document.getElementById('999');
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-    }
-};
 
 export default function Banner() {
     return (
@@ -80,7 +73,7 @@ export default function Banner() {
                                     <p className="para1 !text-white mb-6 max-w-[700px]">
                                         {slide.description}
                                     </p>
-                                     <button  onClick={scrollToDiv}  className="border-2 border-primary animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] bg-[#E67529] hover:text-white transition">
+                                    <button className="border-2 border-primary animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] bg-[#E67529] hover:text-white transition">
                                         Buy Tickets
                                     </button>
                                 </div>
