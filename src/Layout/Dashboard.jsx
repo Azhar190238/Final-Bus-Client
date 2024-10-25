@@ -29,7 +29,7 @@ const Dashboard = () => {
     return (
         <div className="flex">
             {/* Sidebar */}
-            <div className={`w-72 min-h-screen bg-[#E675291A] p-4 sm:block ${isMenuOpen ? 'block absolute top-0 left-0' : 'hidden'} sm:relative`}>
+            <div className={`w-72 min-h-screen bg-primary p-4 sm:block ${isMenuOpen ? 'block absolute top-0 left-0' : 'hidden'} sm:relative`}>
                 <ul className="menu space-y-4 mt-10">
                     {navItems.map((item, index) => (
                         <li key={index} className="p-1 uppercase">
@@ -46,7 +46,7 @@ const Dashboard = () => {
             </div>
 
             {/* Hamburger Icon for small devices */}
-            <div className="sm:hidden fixed top-0 left-0 w-full bg-[#954917e0] p-4 flex justify-between items-center">
+            <div className="sm:hidden fixed top-0 left-0 w-full bg-primary p-4 flex justify-between items-center">
                 <h1 className="text-white text-lg">Admin Dashboard</h1>
                 <button onClick={toggleMenu} className="text-white">
                     {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}

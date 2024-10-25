@@ -25,7 +25,7 @@ const Login = () => {
         console.log({ ...values, role });
         try {
             // Send phone, password, and role to the server
-            const response = await axios.post('http://localhost:5000/login', {
+            const response = await axios.post('https://api.koyrabrtc.com/login', {
                 phone: values.phone,
                 password: values.password,
                 role: role // Send the selected role
@@ -41,6 +41,7 @@ const Login = () => {
             });
 
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.userId);
 
             navigate(from, { replace: true });
         } catch (error) {

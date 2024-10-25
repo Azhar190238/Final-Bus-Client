@@ -4,6 +4,7 @@ import { TbArmchair } from "react-icons/tb";
 import { TbCoinTakaFilled } from "react-icons/tb";
 import SectionHeader from "../../Shared-file/SectionHeader";
 import axios from "axios";
+import { FaBusAlt } from "react-icons/fa";
 
 const LatestBus = () => {
     const [busData, setBusData] = useState(null);
@@ -36,7 +37,7 @@ const LatestBus = () => {
     useEffect(() => {
         const fetchBusData = async () => {
             try {
-                const response = await fetch("http://localhost:5000/buses"); // Replace with your API endpoint
+                const response = await fetch("https://api.koyrabrtc.com/buses"); // Replace with your API endpoint
                 if (!response.ok) {
                     const errorText = await response.text(); // Get the response text for debugging
                     throw new Error(`Network response was not ok: ${errorText}`);
@@ -68,7 +69,7 @@ const LatestBus = () => {
         const fetchPaidSeats = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:5000/allocated-seats/${busName}`, {
+                const response = await axios.get(`https://api.koyrabrtc.com/allocated-seats/${busName}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}` // Add Authorization header
@@ -100,7 +101,14 @@ const LatestBus = () => {
     console.log('SEAT=', allocatedSeats.length)
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
     }
 
     if (error) {

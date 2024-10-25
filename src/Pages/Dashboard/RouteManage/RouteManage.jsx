@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import icons for update and delete
+import { FaBusAlt, FaEdit, FaTrashAlt } from 'react-icons/fa'; // Import icons for update and delete
 import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const RouteManage = () => {
@@ -7,7 +7,7 @@ const RouteManage = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingRoute, setEditingRoute] = useState(null);
     const [formData, setFormData] = useState({ routeName: '', price: '' });
-
+    const [loading, setLoading] = useState(true);
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // You can change this to show more/less items per page
@@ -16,7 +16,7 @@ const RouteManage = () => {
     useEffect(() => {
         const fetchBusData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/routes', {
+                const response = await fetch('https://api.koyrabrtc.com/routes', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token in headers
                     }
@@ -29,6 +29,8 @@ const RouteManage = () => {
             } catch (error) {
                 console.error('Error fetching bus data:', error);
                 Swal.fire('Error', 'Unable to fetch bus data. Please try again later.', 'error');
+            } finally {
+                setLoading(false); // Stop loading once data is fetched
             }
         };
         fetchBusData();
@@ -44,7 +46,7 @@ const RouteManage = () => {
         const { busId, routeIndex } = editingRoute;
 
         try {
-            const response = await fetch(`http://localhost:5000/routes/${busId}/${routeIndex}`, {
+            const response = await fetch(`https://api.koyrabrtc.com/routes/${busId}/${routeIndex}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,7 +95,7 @@ const RouteManage = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Call the DELETE API to remove the route
-                fetch(`http://localhost:5000/routes/${busId}/${routeIndex}`, {
+                fetch(`https://api.koyrabrtc.com/routes/${busId}/${routeIndex}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token in headers
@@ -112,7 +114,7 @@ const RouteManage = () => {
 
                             if (remainingRoutes === 0) {
                                 // Delete the bus if there are no remaining routes
-                                return fetch(`http://localhost:5000/buses/${busId}`, {
+                                return fetch(`https://api.koyrabrtc.com/buses/${busId}`, {
                                     method: 'DELETE',
                                     headers: {
                                         'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token in headers
@@ -163,6 +165,17 @@ const RouteManage = () => {
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
+    }
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
     }
 
     return (

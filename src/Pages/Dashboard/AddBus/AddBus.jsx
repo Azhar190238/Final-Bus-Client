@@ -15,7 +15,7 @@ const AddBus = () => {
             // Retrieve the token from localStorage
             const token = localStorage.getItem('token'); // Change this to your token storage logic
 
-            const response = await axios.post('http://localhost:5000/buses', formattedValues, {
+            const response = await axios.post('https://api.koyrabrtc.com/buses', formattedValues, {
                 headers: {
                     'Authorization': `Bearer ${token}`, // Include the token in the headers
                 }

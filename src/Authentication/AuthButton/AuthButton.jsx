@@ -30,6 +30,7 @@ const AuthButton = () => {
 
     const handleSignOut = () => {
         localStorage.removeItem('token'); 
+        localStorage.removeItem('userId'); 
         Swal.fire({
             icon: 'success',
             title: 'Signed out successfully',
@@ -52,7 +53,7 @@ const AuthButton = () => {
     return (
         <>
             {isAuthenticated ? (
-                <div className="relative top-3 ">
+                <div className="relative right-10 md:right-32 lg:right-0 lg:top-3 ">
 
                     <FaUserCircle 
                         className="text-4xl cursor-pointer"
@@ -82,7 +83,7 @@ const AuthButton = () => {
                     )}
                 </div>
             ) : (
-                <button onClick={handleLoginRedirect} className="button px-10">
+                <button onClick={handleLoginRedirect} className="button !text-[12px] sm:!text-[16px] md:!text-[18px] lg:!text-xl relative right-10 md:right-28 lg:right-0 px-2 sm:px-5 md:px-10">
                     Login
                 </button>
             )}

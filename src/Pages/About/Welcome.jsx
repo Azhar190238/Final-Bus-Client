@@ -1,5 +1,5 @@
 import{ useState } from 'react';
-
+import aboutImage from '../../../src/assets/about/admin.jpeg'
 const Welcome = () => {
     const [activeTab, setActiveTab] = useState('mission');
 
@@ -15,7 +15,7 @@ const Welcome = () => {
             <div className='flex flex-col lg:flex-row-reverse mx-8 md:mx-0 gap-24 '>
                 <div className='w-full md:w-1/2 mt-28 bg-primary p-10 rounded-md '>
                     <div className='h-auto md:h-[650px]'>
-                        <img src='/src/assets/about/admin.jpeg' alt="bg" className='h-auto md:h-[650px] rounded-md w-full' />
+                        <img src= {aboutImage} alt="bg" className='h-auto md:h-[650px] rounded-md w-full' />
                     </div>
                 </div>
                 <div className='w-full md:w-1/2 flex flex-col justify-center items-center'>

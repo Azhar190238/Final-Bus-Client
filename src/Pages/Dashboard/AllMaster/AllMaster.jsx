@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaBusAlt, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineSystemUpdateAlt } from "react-icons/md";
 import Swal from "sweetalert2";
 
@@ -14,7 +14,7 @@ const AllMaster = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch("http://localhost:5000/users", {
+        fetch("https://api.koyrabrtc.com/users", {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
@@ -44,7 +44,7 @@ const AllMaster = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem('token');
-                fetch(`http://localhost:5000/users/${user._id}`, {
+                fetch(`https://api.koyrabrtc.com/users/${user._id}`, {
                     method: "DELETE",
                     headers: {
                         'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const AllMaster = () => {
 
     const handleUpdate = () => {
         const token = localStorage.getItem("token");
-        fetch(`http://localhost:5000/users/${selectedUser._id}`, {
+        fetch(`https://api.koyrabrtc.com/users/${selectedUser._id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -129,7 +129,7 @@ const AllMaster = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem('token');
-                fetch(`http://localhost:5000/users/${user._id}/approve`, {
+                fetch(`https://api.koyrabrtc.com/users/${user._id}/approve`, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const AllMaster = () => {
                     .catch((error) => {
                         console.error('Error approving user:', error);
                         Swal.fire('Error!', 'An error occurred while approving the user.', 'error');
-                    });
+                    })
             }
         });
     };
@@ -164,7 +164,14 @@ const AllMaster = () => {
     const totalPages = Math.ceil(memberUsers.length / usersPerPage);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
     }
 
     return (

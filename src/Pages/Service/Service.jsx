@@ -7,9 +7,9 @@ import axios from 'axios';
 import { Form, Input, Select } from "antd";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
+import { FaBusAlt } from "react-icons/fa";
 
-
-const Service = ({ seatPrice, busName }) => {
+const Service = ({ seatPrice, busName, selectedRoute, selectedDate }) => {
     const [activeSeats, setActiveSeats] = useState([]);
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
@@ -25,6 +25,7 @@ const Service = ({ seatPrice, busName }) => {
     const [role, setRole] = useState(null);
     const [masterUsers, setMasterUsers] = useState([]);
     const [selectedMaster, setSelectedMaster] = useState(null);
+
 
     const leftSeats = [
         'A1', 'A2',
@@ -50,6 +51,8 @@ const Service = ({ seatPrice, busName }) => {
         'I3', 'I4',
         'J3', 'J4'
     ];
+
+    const lastSeats = [ 'K1', 'K2', 'K3', 'K4','K5']
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -77,7 +80,6 @@ const Service = ({ seatPrice, busName }) => {
     const totalPrice = activeSeats.length * seatPrice;
     const grandTotal = totalPrice - discount;
 
-
     const payment = {
         price: grandTotal,
         allocatedSeat: activeSeats,
@@ -87,18 +89,23 @@ const Service = ({ seatPrice, busName }) => {
         address: address,
         email: email,
         busName: busName,
-        counterMaster: selectedMaster
+        counterMaster: selectedMaster,
+        selectedRoute: selectedRoute,
+        date: selectedDate
     };
 
     useEffect(() => {
         const fetchPaidSeats = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:5000/allocated-seats/${busName}`, {
+                const response = await axios.get(`https://api.koyrabrtc.com/allocated-seats/${busName}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
+                    params: {
+                        selectedDate // Send selected date as a query parameter
+                    }
                 });
 
                 if (Array.isArray(response.data)) {
@@ -119,20 +126,19 @@ const Service = ({ seatPrice, busName }) => {
         const fetchUserRole = async () => {
             try {
                 const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('userId');
                 if (!token) {
-                    // If no token, don't make the request and keep the role as null
                     return;
                 }
 
-                const response = await axios.get('http://localhost:5000/user-role', {
+                const response = await axios.get(`https://api.koyrabrtc.com/user-role/${userId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setRole(response.data.role); // Set the user's role
+                setRole(response.data.role);
             } catch (error) {
                 console.error('Error fetching user role:', error);
-                // Set role to null in case of error or failed login
                 setRole(null);
             }
         };
@@ -140,22 +146,22 @@ const Service = ({ seatPrice, busName }) => {
         const fetchMasterUsers = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:5000/master-users', {
+                const response = await axios.get('https://api.koyrabrtc.com/master-users', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setMasterUsers(response.data);  // Set the fetched users
+                setMasterUsers(response.data);
             } catch (error) {
                 console.error('Error fetching master users:', error);
             } finally {
-                setLoading(false);  // Stop loading
+                setLoading(false);
             }
         };
         fetchMasterUsers();
         fetchUserRole();
         fetchPaidSeats();
-    }, [busName]);
+    }, [busName, selectedDate]);
 
     const navigate = useNavigate();
 
@@ -174,7 +180,7 @@ const Service = ({ seatPrice, busName }) => {
         try {
             console.log(payment);
 
-            const response = await fetch("http://localhost:5000/payment", {
+            const response = await fetch("https://api.koyrabrtc.com/payment", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -206,7 +212,17 @@ const Service = ({ seatPrice, busName }) => {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
+    }
     if (error) return <p>{error}</p>;
 
     return (
@@ -218,6 +234,7 @@ const Service = ({ seatPrice, busName }) => {
                     <div className="my-10">
                         <p className="text-center text-5xl">{allocatedSeats.length}</p>
                         <p className="text-center text-5xl">{allocatedSeats.join(', ')}</p>
+                        
                     </div>
                     <h3 className="ticket-header">Select your seat</h3>
                     <div className="flex items-center justify-between font-medium text-[16px] md:text-2xl py-5 border-dashed border-b border-black">
@@ -260,6 +277,18 @@ const Service = ({ seatPrice, busName }) => {
                             ))}
                         </div>
                     </div>
+                    <div className="grid grid-cols-5 gap-3 mt-6 ml-4 ">
+                            {lastSeats.map((seat, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleClick(seat)}
+                                    disabled={allocatedSeats.includes(seat)}
+                                    className={`seat1 seat-text ${activeSeats.includes(seat) ? '!bg-primary !text-white' : ''} ${allocatedSeats.includes(seat) ? '!bg-gray-300 !cursor-not-allowed !border-4 border-red-500' : ''}`}
+                                >
+                                    {seat}
+                                </button>
+                            ))}
+                        </div>
                 </div>
                 <div className="w-full md:w-[40%] border-none md:border-dashed border-primary border-l-[3px]">
                     <div className="px-0 md:px-10 ">
@@ -280,24 +309,30 @@ const Service = ({ seatPrice, busName }) => {
                                 <p className="description !text-[#030712] !text-right">{totalPrice} BDT</p>
                             </div>
 
-                            {role === 'admin' || role === 'master' ? (
-                                <div className="flex items-center">
-                                    <input
-                                        className="w-full bg-white text-black p-4 border rounded-l-xl"
-                                        placeholder="Enter Discount price"
-                                        type="number"
-                                        value={inputValue}
-                                        onChange={handleChange}
-                                    />
-                                    <button
-                                        className={`p-4 bg-primary text-white rounded-r-xl ${!inputValue ? 'opacity-40 cursor-not-allowed' : ''}`}
-                                        onClick={applyDiscount}
-                                        disabled={!inputValue}
-                                    >
-                                        Apply
-                                    </button>
+                            {role === 'admin' || (role === 'master') ? (
+                                <div className="flex flex-col items-start">
+                                    <div className="flex items-center w-full">
+                                        <input
+                                            className={`w-full bg-white text-black p-4 border ${inputValue > 50 ? 'border-red-500' : ''} rounded-l-xl`}
+                                            placeholder="Enter Discount price"
+                                            type="number"
+                                            value={inputValue}
+                                            onChange={handleChange}
+                                        />
+                                        <button
+                                            className={`p-4 bg-primary text-white rounded-r-xl ${(!inputValue || inputValue > 50) ? 'opacity-40 cursor-not-allowed' : ''}`}
+                                            onClick={applyDiscount}
+                                            disabled={!inputValue || inputValue > 50}
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+                                    {inputValue > 50 && (
+                                        <p className="text-red-500 mt-2">Please enter a value less than or equal to 50</p>
+                                    )}
                                 </div>
                             ) : null}
+
 
                             {/* Grand Total */}
                             <div className="py-6 flex items-center justify-between">
@@ -317,7 +352,7 @@ const Service = ({ seatPrice, busName }) => {
                                 <Form.Item
                                     label="Email: "
                                     name="email"
-                                    rules={[{ required: true, message: 'Please input your Email!' }]}
+
                                 >
                                     <Input onChange={(e) => setEmail(e.target.value)} placeholder='Input your Email' type="email" className="p-4" />
                                 </Form.Item>

@@ -6,6 +6,10 @@ import SectionHeader from "../Shared-file/SectionHeader";
 import Service from "../Service/Service";
 import BasicHeader from "../Shared-file/BasicHeader";
 import axios from "axios";
+import moment from 'moment';
+import { DatePicker } from "antd";
+import { FaBusAlt } from "react-icons/fa";
+
 
 const AllService = () => {
     const { id } = useParams();
@@ -21,7 +25,7 @@ const AllService = () => {
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/buses/${id}`);
+                const response = await fetch(`https://api.koyrabrtc.com/buses/${id}`);
                 if (!response.ok) throw new Error('Failed to fetch data');
                 const data = await response.json();
                 setServiceData(data);
@@ -37,15 +41,26 @@ const AllService = () => {
 
     // Fetch allocated seats
     const busName = serviceData?.busName;
+
+    const dateFormatList = ['DD/MM/YYYY'];
+    const [selectedDate, setSelectedDate] = useState(moment().format('DD/MM/YYYY'));
+    const handleDateChange = (date) => {
+        const select = date ? date.format('DD/MM/YYYY') : null;
+        setSelectedDate(select);
+    };
+
     useEffect(() => {
         const fetchPaidSeats = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:5000/allocated-seats/${busName}`, {
+                const response = await axios.get(`https://api.koyrabrtc.com/allocated-seats/${busName}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
+                    params: {
+                        selectedDate // Send selected date as a query parameter
+                    }
                 });
 
                 if (Array.isArray(response.data)) {
@@ -64,13 +79,13 @@ const AllService = () => {
         };
 
         fetchPaidSeats();
-    }, [busName]);
+    }, [busName, selectedDate]);
 
     // Fetch routes matching the bus name and set default price
     useEffect(() => {
         const fetchRoutes = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/routes');
+                const response = await axios.get('https://api.koyrabrtc.com/routes');
                 const allRoutes = response.data;
 
                 // Filter routes that match the current bus name
@@ -113,7 +128,17 @@ const AllService = () => {
     };
 
     // Handle loading and error states
-    if (loading) return <p>Loading...</p>;
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
+    }
     if (error) return <p>{error}</p>;
 
     if (!serviceData) return <div>No service data available.</div>;
@@ -139,6 +164,9 @@ const AllService = () => {
             <div className="my-10 max-w-[1320px] mx-auto">
                 <p className="text-center text-5xl">{allocatedSeats.length}</p>
                 <p className="text-center text-5xl">{allocatedSeats.join(', ')}</p>
+            </div>
+            <div className="flex justify-center mt-5">
+                <DatePicker className="p-3 w-full md:w-1/2 lg:w-[20%]" onChange={handleDateChange} format={dateFormatList} />
             </div>
             <div className="section-gap flex flex-col items-center md:flex-row space-x-0 md:space-x-24 bus-container">
                 <div className="w-full md:w-[75%]">
@@ -202,7 +230,7 @@ const AllService = () => {
                     </div>
                 </div>
             </div>
-            <Service seatPrice={ticketPrice} busName={busName} />
+            <Service seatPrice={ticketPrice} busName={busName} selectedRoute={selectedRoute} selectedDate={selectedDate} />
         </section>
     );
 };

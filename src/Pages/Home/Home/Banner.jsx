@@ -3,29 +3,34 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Keyboard, Pagination, Navigation, Autoplay } from 'swiper/modules';
+import { Link } from 'react-router-dom';
+import image1 from '../../../../src/assets/banner/banner1.png'
+import image2 from '../../../../src/assets/banner/banner2.png'
+import image3 from '../../../../src/assets/banner/banner3.png'
+import image4 from '../../../../src/assets/banner/banner4.png'
 
 const slidesData = [
     {
         id: 1,
-        image: '/src/assets/banner/banner1.png',
+        image: image1,
         title: 'End-to-End Travel with BRTC Paribahan',
         description: 'BRTC Paribahan provides safe and affordable bus services across Bangladesh, connecting major cities with modern, comfortable buses. Our dedicated team ensures a seamless travel experience, making your journey hassle-free. Book your tickets today!',
     },
     {
         id: 2,
-        image: '/src/assets/banner/banner2.png',
+        image: image2,
         title: 'Explore New Destinations with BRTC Paribahan',
         description: 'Discover beautiful places and enjoy a comfortable journey with our reliable bus services. Your adventure awaits!',
     },
     {
         id: 3,
-        image: '/src/assets/banner/banner3.png',
+        image: image3,
         title: 'End-to-End Travel with BRTC Paribahan',
         description: 'BRTC Paribahan provides safe and affordable bus services across Bangladesh, connecting major cities with modern, comfortable buses. Our dedicated team ensures a seamless travel experience, making your journey hassle-free. Book your tickets today!',
     },
     {
         id: 4,
-        image: '/src/assets/banner/banner4.png',
+        image: image4,
         title: 'Explore New Destinations with BRTC Paribahan',
         description: 'Discover beautiful places and enjoy a comfortable journey with our reliable bus services. Your adventure awaits!',
     },
@@ -64,7 +69,6 @@ export default function Banner() {
                                     background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8) 100%, rgba(0, 0, 0, 0) 0%)'
                                 }}
                             ></div>
-
                             <div className="flex items-center justify-center h-full relative z-10">
                                 <div className="text-center mx-auto text-white p-6">
                                     <h1 className="text-3xl mx-auto max-w-[700px] md:text-6xl font-bold mb-4 md:leading-[140%]">
@@ -73,9 +77,11 @@ export default function Banner() {
                                     <p className="para1 !text-white mb-6 max-w-[700px]">
                                         {slide.description}
                                     </p>
-                                    <button className="border-2 border-primary animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] bg-[#E67529] hover:text-white transition">
-                                        Buy Tickets
-                                    </button>
+                                    <Link to='/ticket'>
+                                        <button className="border-2 border-primary animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] bg-[#E67529] hover:text-white transition">
+                                            Buy Tickets
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdCloseCircle } from 'react-icons/io';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthButton from '../../../Authentication/AuthButton/AuthButton';
-
+import logo from '../../../../src/assets/logo.png'
 const links = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
@@ -37,14 +37,14 @@ const Navbar = () => {
   const renderLinks = () =>
     links.map((link, index) => (
       <div key={index}>
-        <a
-          href={link.path}
+        <Link
+          to={link.path}
           className={`font-noto text-[18px]  font-medium ${activeLink === link.name ? 'text-[#fff] bg-primary px-3 py-2 rounded' : 'text-[#030712]'
             }`}
           onClick={() => handleLinkClick(link.name, link.path)}
         >
           {link.name}
-        </a>
+        </Link>
       </div>
     ));
 
@@ -53,16 +53,18 @@ const Navbar = () => {
       <div className="max-w-[1320px] mx-auto  px-4  flex items-center justify-between">
         <a href="/">
           <img
-            src="/src/assets/logo.png"
+          src= {logo}
             alt="logoImage"
             className="w-20 h-20 bg-primary rounded-full p-1"
           />
         </a>
 
-        <div className="lg:hidden absolute left-1/2 transform -translate-x-1/2 ml-8">
-          <button className="border-2 border-[#E67529]  animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary transition">
-            Buy Tickets
-          </button>
+        <div className="lg:hidden absolute left-36 sm:left-1/2 transform -translate-x-1/2 ml-4 sm:ml-8">
+          <Link to='/ticket'>
+            <button className="border-2 border-[#E67529]  animate-pulse-scale px-2 sm:px-4 md:px-8 py-2 sm:py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary transition">
+              Buy Tickets
+            </button>
+          </Link>
         </div>
 
         <div className="lg:hidden flex flex-col justify-center">
@@ -87,11 +89,11 @@ const Navbar = () => {
             <AuthButton />
           </div>
           <div className="hidden lg:flex relative justify-center lg:justify-end">
-            <button
-              className="border-2 border-[#E67529] animate-pulse-scale  px-4 md:px-8 py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary"
-            >
+            <Link to='/ticket'>
+            <button className="border-2 border-[#E67529]  animate-pulse-scale px-4 md:px-8 py-4 rounded-[4px] hover:bg-[#E67529] hover:text-white text-primary transition">
               Buy Tickets
             </button>
+          </Link>
           </div>
         </div>
 

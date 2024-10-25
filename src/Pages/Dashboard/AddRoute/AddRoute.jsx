@@ -10,7 +10,7 @@ const AddRoute = () => {
     useEffect(() => {
         const fetchBuses = async () => {
             try {
-                const response = await fetch('http://localhost:5000/buses');
+                const response = await fetch('https://api.koyrabrtc.com/buses');
                 if (response.ok) {
                     const data = await response.json();
                     setBuses(data); // Assuming data is an array of buses
@@ -54,7 +54,7 @@ const AddRoute = () => {
             // Retrieve the token from localStorage
             const token = localStorage.getItem('token');
 
-            const response = await fetch('http://localhost:5000/routes', {
+            const response = await fetch('https://api.koyrabrtc.com/routes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

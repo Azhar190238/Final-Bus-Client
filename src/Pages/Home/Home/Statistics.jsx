@@ -1,19 +1,22 @@
+import statImage1 from '../../../../src/assets/statistics/people.png'
+import statImage2 from '../../../../src/assets/statistics/stoppage.png'
+import statImage3 from '../../../../src/assets/statistics/ticket-cupon.png'
 const statisticsData = [
     {
         id: 1,
-        image: "/src/assets/statistics/people.png",
+        image: statImage1,
         value: "500K+",
         label: "Registered Users",
     },
     {
         id: 2,
-        image: "/src/assets/statistics/stoppage.png",
+        image: statImage2,
         value: "1.7 lacks",
         label: "Tickets Sold",
     },
     {
         id: 3,
-        image: "/src/assets/statistics/ticket-cupon.png",
+        image: statImage3 ,
         value: "800K+",
         label: "Rental Partners",
     },

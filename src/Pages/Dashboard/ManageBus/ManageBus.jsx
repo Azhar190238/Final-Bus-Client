@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaBusAlt, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineSystemUpdateAlt } from "react-icons/md";
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
@@ -10,12 +10,12 @@ const ManageBus = () => {
     const [busesPerPage] = useState(12);
     const [selectedBus, setSelectedBus] = useState(null); // Store bus for updating
     const [showModal, setShowModal] = useState(false); // Modal visibility
-
+    const [loading, setLoading] = useState(true); // Loading state
     // Fetch buses data on component mount
     useEffect(() => {
         const fetchBuses = async () => {
             try {
-                const response = await fetch('http://localhost:5000/buses');
+                const response = await fetch('https://api.koyrabrtc.com/buses');
                 if (!response.ok) throw new Error('Failed to fetch buses');
                 const data = await response.json();
                 setBuses(data);
@@ -26,6 +26,9 @@ const ManageBus = () => {
                     text: "Could not load buses. Please try again later.",
                     icon: "error"
                 });
+            }
+            finally {
+                setLoading(false); // Stop loading once data is fetched
             }
         };
         fetchBuses();
@@ -46,7 +49,7 @@ const ManageBus = () => {
         if (confirmation.isConfirmed) {
             const token = localStorage.getItem('token');
             try {
-                const response = await fetch(`http://localhost:5000/buses/${bus._id}`, {
+                const response = await fetch(`https://api.koyrabrtc.com/buses/${bus._id}`, {
                     method: "DELETE",
                     headers: {
                         'Content-Type': 'application/json',
@@ -89,7 +92,7 @@ const ManageBus = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/buses/${selectedBus._id}`, {
+            const response = await fetch(`https://api.koyrabrtc.com/buses/${selectedBus._id}`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,6 +125,17 @@ const ManageBus = () => {
             });
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
+    }
 
     // Pagination logic
     const indexOfLastBus = currentPage * busesPerPage;

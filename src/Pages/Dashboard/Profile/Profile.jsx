@@ -1,8 +1,9 @@
+import image from '../../../../src/assets/about/admin.jpeg'
 const Profile = () => {
     return (
         <div className="max-w-[800px] mx-auto mt-16 text-center">
             <img
-                src="/src/assets/about/admin.jpeg"  // Make sure to replace this with the actual image path
+                src={image}  // Make sure to replace this with the actual image path
                 alt="Azhar's Profile"
                 className="w-[500px] h-[500px] object-cover mx-auto"
             />

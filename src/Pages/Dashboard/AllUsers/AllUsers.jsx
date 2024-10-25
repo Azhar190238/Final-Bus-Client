@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaBusAlt, FaTrashAlt } from "react-icons/fa";
 import Swal from 'sweetalert2';
 
 const AllUsers = () => {
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(12);
-
+    const [loading, setLoading] = useState(true);
     // Fetch users when the component mounts
     useEffect(() => {
         fetchUsers();
@@ -14,14 +14,17 @@ const AllUsers = () => {
 
     const fetchUsers = () => {
         const token = localStorage.getItem('token'); // Fetch the token for authorization
-        fetch('http://localhost:5000/users', {
+        fetch('https://api.koyrabrtc.com/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => response.json())
             .then(data => setUsers(data))
-            .catch(error => console.error("Error fetching users:", error));
+            .catch(error => console.error("Error fetching users:", error))
+            .finally(() => {
+                setLoading(false); // Stop loading once data is fetched or if an error occurs
+            });
     };
 
     // Handle user deletion
@@ -37,7 +40,7 @@ const AllUsers = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem('token');
-                fetch(`http://localhost:5000/users/${user._id}`, {
+                fetch(`https://api.koyrabrtc.com/users/${user._id}`, {
                     method: "DELETE",
                     headers: {
                         'Content-Type': 'application/json',
@@ -61,7 +64,17 @@ const AllUsers = () => {
             }
         });
     };
-    
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
+    }
 
     // Pagination logic
     const memberUsers = users.filter(user => user.role === "member");

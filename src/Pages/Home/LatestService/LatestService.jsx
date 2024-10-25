@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ServiceCard from '../../Card/ServiceCard';
 import SectionHeader from '../../Shared-file/SectionHeader';
+import { FaBusAlt } from 'react-icons/fa';
 
 const LatestService = () => {
     const [serviceData, setServiceData] = useState([]);
@@ -10,7 +11,7 @@ const LatestService = () => {
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/buses'); // Replace with your actual API endpoint
+                const response = await fetch('https://api.koyrabrtc.com/buses'); // Replace with your actual API endpoint
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -27,8 +28,16 @@ const LatestService = () => {
         fetchServiceData();
     }, []);
 
+  
     if (loading) {
-        return <div>Loading...</div>; // You can customize the loading state
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
     }
 
     if (error) {

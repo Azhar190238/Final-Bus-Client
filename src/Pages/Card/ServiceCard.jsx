@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { FaBusAlt } from 'react-icons/fa';
 
 // eslint-disable-next-line react/prop-types
 const ServiceCard = ({ img, startTime = "11:00 AM", totalSeat, _id, busName }) => {
@@ -61,7 +62,7 @@ const ServiceCard = ({ img, startTime = "11:00 AM", totalSeat, _id, busName }) =
         const fetchPaidSeats = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:5000/allocated-seats/${busName}`, {
+                const response = await axios.get(`https://api.koyrabrtc.com/allocated-seats/${busName}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}` // Add Authorization header
@@ -87,7 +88,17 @@ const ServiceCard = ({ img, startTime = "11:00 AM", totalSeat, _id, busName }) =
         fetchPaidSeats();
     }, [busName]);
 
-    if (loading) return <p>Loading...</p>;
+   
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
+    }
     if (error) return <p>{error}</p>;
 
     const availableSeat = totalSeat - allocatedSeats.length;

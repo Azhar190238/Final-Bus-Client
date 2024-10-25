@@ -1,62 +1,66 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FaBusAlt } from 'react-icons/fa';
 
 const CounterPayment = () => {
     const [counterData, setCounterData] = useState([]);
     const [approvedMasters, setApprovedMasters] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true); // Loading state
     const rowsPerPage = 15; // Show 15 rows per page
 
     useEffect(() => {
-        // Fetch approved counter master data with token verification
-        const fetchCounterMasters = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/users', {
+                // Fetch approved counter master data with token verification
+                const mastersResponse = await axios.get('https://api.koyrabrtc.com/users', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 });
-
-                // Filter users where role is "master" and status is "approved"
-                const masters = response.data.filter(user => user.role === 'master' && user.status === 'approved');
+                const masters = mastersResponse.data.filter(user => user.role === 'master' && user.status === 'approved');
                 setApprovedMasters(masters);
-            } catch (error) {
-                console.error('Error fetching counter masters:', error);
-            }
-        };
 
-        // Fetch counter data from the orders API
-        const fetchCounterData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/orders', {
+                // Fetch counter data from the orders API
+                const counterResponse = await axios.get('https://api.koyrabrtc.com/orders', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 });
-                setCounterData(response.data);
+                setCounterData(counterResponse.data);
             } catch (error) {
-                console.error('Error fetching counter data:', error);
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false); // Stop loading once data is fetched
             }
         };
 
-        fetchCounterMasters();
-        fetchCounterData();
+        fetchData();
     }, []);
 
-    // Helper function to calculate total seats and total price for a specific counter master
+    // Helper function to calculate totals for a specific counter master
     const calculateTotals = (data) => {
         const totalSeats = data.reduce((sum, item) => sum + item.allocatedSeat.length, 0);
         const totalPrice = data.reduce((sum, item) => sum + item.price, 0);
-        const buses = [...new Set(data.map(item => item.busName))].join(', '); // Get unique bus names
-        const seats = data.map(item => item.allocatedSeat.join(', ')).join(', '); // Concatenate all seats
+        const buses = [...new Set(data.map(item => item.busName))].join(', ');
+        const seats = data.map(item => item.allocatedSeat.join(', ')).join(', ');
         return { totalSeats, totalPrice, buses, seats };
     };
 
-    // Get the data for the current page
     const currentMasters = approvedMasters.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-
-    // Calculate total number of pages
     const totalPages = Math.ceil(approvedMasters.length / rowsPerPage);
+
+    // Loading Spinner
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="text-4xl animate-spin">
+                    <FaBusAlt className="text-primary" />
+                </div>
+                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="m-10">
@@ -77,11 +81,9 @@ const CounterPayment = () => {
                         </thead>
                         <tbody>
                             {currentMasters.map((master) => {
-                                // Filter orders for this specific counter master
                                 const masterOrders = counterData.filter(order => order.counterMaster === master.name && order.status === 'paid');
 
                                 if (masterOrders.length > 0) {
-                                    // There are transactions for this master
                                     const { totalSeats, totalPrice, buses, seats } = calculateTotals(masterOrders);
 
                                     return (
@@ -95,7 +97,6 @@ const CounterPayment = () => {
                                         </tr>
                                     );
                                 } else {
-                                    // No transactions for this master, show only the name
                                     return (
                                         <tr key={master._id.$oid} className="hover:bg-gray-100">
                                             <td className="border border-gray-300 px-4 py-2">{master.name}</td>
@@ -128,4 +129,3 @@ const CounterPayment = () => {
 };
 
 export default CounterPayment;
-

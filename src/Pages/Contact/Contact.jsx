@@ -1,7 +1,8 @@
 
 import { FiMapPin, FiPhoneCall } from 'react-icons/fi';
 import { LuMailCheck } from 'react-icons/lu';
-
+import contact1 from '../../../src/assets/service/card1.png'
+import contact2 from '../../../src/assets/service/card2.png'
 const Contact = () => {
     return (
         <div className='max-w-[1320px] mt-20 mx-auto'>
@@ -25,8 +26,8 @@ const Contact = () => {
                         </div>
                     </ul>
                     <div className='flex flex-col md:flex-row gap-6 mt-16'>
-                        <img className='rounded max-w-[312px] max-h-[419px]' src='/src/assets/service/card1.png' alt='image' />
-                        <img className='rounded max-w-[254px] max-h-[367px] mt-20' src='/src/assets/service/card2.png' alt='image' />
+                        <img className='rounded max-w-[312px] max-h-[419px]' src= {contact1} alt='image' />
+                        <img className='rounded max-w-[254px] max-h-[367px] mt-20' src= {contact2} alt='image' />
                     </div>
                 </div>
                 <div className='w-full lg:w-1/2 px-6'>

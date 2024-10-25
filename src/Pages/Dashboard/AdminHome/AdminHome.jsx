@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaBus, FaUserAstronaut, FaUsers } from "react-icons/fa";
+import { FaBus, FaBusAlt, FaUserAstronaut, FaUsers } from "react-icons/fa";
 import { GiPoliceOfficerHead } from "react-icons/gi";
 
 const AdminHome = () => {
@@ -7,10 +7,10 @@ const AdminHome = () => {
   const [mastersCount, setMastersCount] = useState(0);
   const [normalUsersCount, setNormalUsersCount] = useState(0);
   const [totalBuses, setTotalBuses] = useState(0);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const token = localStorage.getItem("token"); // Assuming you have token stored in localStorage
-    fetch("http://localhost:5000/users", {
+    fetch("https://api.koyrabrtc.com/users", {
       headers: {
         Authorization: `Bearer ${token}`, // Include token in headers
       },
@@ -31,13 +31,16 @@ const AdminHome = () => {
         setMastersCount(masters);
         setNormalUsersCount(normalUsers);
       })
-      .catch((error) => console.error("Error fetching users:", error));
+      .catch((error) => console.error("Error fetching users:", error))
+      .finally(() => {
+        setLoading(false); // Stop loading once data is fetched or if an error occurs
+    });
   }, []);
 
   // Fetch total buses
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch("http://localhost:5000/buses", {
+    fetch("https://api.koyrabrtc.com/buses", {
       headers: {
         Authorization: `Bearer ${token}`, // Include token in headers
       },
@@ -77,6 +80,16 @@ const AdminHome = () => {
     },
   ];
 
+  if (loading) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <div className="text-4xl animate-spin">
+                <FaBusAlt className="text-primary" />
+            </div>
+            <p className="ml-4 text-2xl text-gray-600">Loading...</p>
+        </div>
+    );
+}
   return (
     <div className="mx-10 my-12">
       {/* Dashboard content */}
