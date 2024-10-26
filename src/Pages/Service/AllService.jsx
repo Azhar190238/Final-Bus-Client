@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { LuBus } from "react-icons/lu";
@@ -8,7 +9,6 @@ import BasicHeader from "../Shared-file/BasicHeader";
 import axios from "axios";
 import moment from 'moment';
 import { DatePicker } from "antd";
-import { FaBusAlt } from "react-icons/fa";
 
 
 const AllService = () => {
@@ -47,6 +47,12 @@ const AllService = () => {
     const handleDateChange = (date) => {
         const select = date ? date.format('DD/MM/YYYY') : null;
         setSelectedDate(select);
+    };
+
+    const disableDates = (current) => {
+        const today = moment().startOf('day');
+        const maxDate = moment().add(15, 'days').endOf('day');
+        return current && (current < today || current > maxDate);
     };
 
     useEffect(() => {
@@ -128,17 +134,7 @@ const AllService = () => {
     };
 
     // Handle loading and error states
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="text-4xl animate-spin">
-                    <FaBusAlt className="text-primary" />
-                </div>
-                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
-            </div>
-        );
-    }
+    if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
     if (!serviceData) return <div>No service data available.</div>;
@@ -166,7 +162,12 @@ const AllService = () => {
                 <p className="text-center text-5xl">{allocatedSeats.join(', ')}</p>
             </div>
             <div className="flex justify-center mt-5">
-                <DatePicker className="p-3 w-full md:w-1/2 lg:w-[20%]" onChange={handleDateChange} format={dateFormatList} />
+                <DatePicker
+                    className="p-3 w-full md:w-1/2 lg:w-[20%]"
+                    onChange={handleDateChange}
+                    format={dateFormatList}
+                    disabledDate={disableDates} // Disable dates before today and after 15 days
+                />
             </div>
             <div className="section-gap flex flex-col items-center md:flex-row space-x-0 md:space-x-24 bus-container">
                 <div className="w-full md:w-[75%]">
@@ -236,3 +237,4 @@ const AllService = () => {
 };
 
 export default AllService;
+

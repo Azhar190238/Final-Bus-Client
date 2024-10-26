@@ -277,7 +277,7 @@ const Service = ({ seatPrice, busName, selectedRoute, selectedDate }) => {
                             ))}
                         </div>
                     </div>
-                    <div className="grid grid-cols-5 gap-3 mt-6 ml-4 ">
+                    <div className="grid grid-cols-5 justify-between mt-6 ml-2 ">
                             {lastSeats.map((seat, index) => (
                                 <button
                                     key={index}

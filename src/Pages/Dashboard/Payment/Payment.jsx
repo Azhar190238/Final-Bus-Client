@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { FaBusAlt } from "react-icons/fa";
+import moment from 'moment';
+import { DatePicker } from "antd";
 
 const Payment = () => {
-    const [loading, setLoading] = useState(true);
     const [buses, setBuses] = useState([]);
     const [selectedBus, setSelectedBus] = useState(null);
     const [paymentHistory, setPaymentHistory] = useState([]);
@@ -18,14 +19,24 @@ const Payment = () => {
             })
             .catch(error => {
                 console.error("Error fetching bus data:", error);
-            })
-            
-            .finally(() => {
-                setLoading(false); // Stop loading once data is fetched or if an error occurs
             });
-            
     }, []);
 
+    const dateFormatList = ['DD/MM/YYYY'];
+    const [selectedDate, setSelectedDate] = useState(moment().format('DD/MM/YYYY'));
+
+    const handleDateChange = (date) => {
+        const select = date ? date.format('DD/MM/YYYY') : null;
+        setSelectedDate(select);
+    };
+
+    const disableDates = (current) => {
+        const minDate = moment().subtract(15, 'days').startOf('day');
+        const maxDate = moment().add(15, 'days').endOf('day');
+        return current && (current < minDate || current > maxDate);
+    };
+
+    // Define fetchPaymentHistory outside of useEffect so it can be used elsewhere
     const fetchPaymentHistory = (busName) => {
         const token = localStorage.getItem('token');
         const selectedBusData = buses.find(bus => bus.busName === busName);  // Get the selected bus data
@@ -38,15 +49,25 @@ const Payment = () => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
+            params: {
+                selectedDate // Send selected date as a query parameter
+            }
         })
             .then(response => {
                 setPaymentHistory(response.data);
+                console.log('date = ', selectedDate)
                 setSelectedBus(busName);
             })
             .catch(error => {
                 console.error("Error fetching payment history:", error);
             });
     };
+
+    useEffect(() => {
+        if (selectedBus) {
+            fetchPaymentHistory(selectedBus);
+        }
+    }, [selectedDate]);
 
     const handleDeleteSeat = (busName, seatId) => {
         const token = localStorage.getItem('token');
@@ -66,32 +87,20 @@ const Payment = () => {
                         'Authorization': `Bearer ${token}`
                     },
                 })
-                    .then(response => {
+                    .then(() => {
                         fetchPaymentHistory(busName);
-
-                        Swal.fire(
-                            'Deleted!',
-                            'The seat has been deleted.',
-                            'success'
-                        );
+                        Swal.fire('Deleted!', 'The seat has been deleted.', 'success');
                     })
                     .catch(error => {
                         console.error("Error deleting seat:", error);
-                        Swal.fire(
-                            'Error!',
-                            'There was a problem deleting the seat.',
-                            'error'
-                        );
+                        Swal.fire('Error!', 'There was a problem deleting the seat.', 'error');
                     });
             }
         });
     };
 
-    // Function to clear all seats for a specific bus
     const handleClearAllSeats = (busName) => {
-        console.log('Payment BusName:',busName);
         const token = localStorage.getItem('token');
-
         Swal.fire({
             title: 'Are you sure?',
             text: "This will clear all allocated seats for this bus!",
@@ -104,32 +113,21 @@ const Payment = () => {
             if (result.isConfirmed) {
                 axios.delete(`https://api.koyrabrtc.com/orders/clear-ala/${busName}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}` // Pass the token for authentication
+                        'Authorization': `Bearer ${token}`
                     },
                 })
                     .then(response => {
                         fetchPaymentHistory(busName);  // Refresh payment history after clearing seats
-
-                        Swal.fire(
-                            'Cleared!',
-                            `All allocated seats for bus ${busName} have been cleared.`,
-                            'success'
-                        );
+                        Swal.fire('Cleared!', `All allocated seats for bus ${busName} have been cleared.`, 'success');
                     })
                     .catch(error => {
                         console.error("Error clearing seats:", error);
-                        Swal.fire(
-                            'Error!',
-                            'There was a problem clearing all allocated seats.',
-                            'error'
-                        );
+                        Swal.fire('Error!', 'There was a problem clearing all allocated seats.', 'error');
                     });
             }
         });
-    }
+    };
 
-
-    // Helper function to group data by bus name
     const groupByBusName = (data) => {
         return data.reduce((result, item) => {
             const bus = item.busName;
@@ -141,7 +139,6 @@ const Payment = () => {
         }, {});
     };
 
-    // Calculate total price and total allocated seats
     const calculateTotals = (payments) => {
         const totalPrice = payments.reduce((sum, payment) => sum + payment.price, 0);
         const totalAllocatedSeats = payments.reduce((sum, payment) => sum + payment.allocatedSeat.length, 0);
@@ -149,16 +146,7 @@ const Payment = () => {
     };
 
     const { totalPrice, totalAllocatedSeats } = calculateTotals(paymentHistory);
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="text-4xl animate-spin">
-                    <FaBusAlt className="text-primary" />
-                </div>
-                <p className="ml-4 text-2xl text-gray-600">Loading...</p>
-            </div>
-        );
-    }
+
     return (
         <div className="m-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -177,10 +165,18 @@ const Payment = () => {
             {selectedBus && (
                 <div className="mt-10">
                     <h2 className="text-2xl font-semibold mb-4">Payment History for {selectedBus}</h2>
+                    <div className="flex justify-center mt-5">
+                        <DatePicker
+                            className="p-3 w-full md:w-1/2 lg:w-[20%]"
+                            onChange={handleDateChange}
+                            format={dateFormatList}
+                            disabledDate={disableDates} // Disable dates before today and after 15 days
+                        />
+                    </div>
 
                     {paymentHistory.length > 0 ? (
                         <div>
-                            {/* Clear All Button */}
+                          
                             <button
                                 className="bg-red-500 text-white px-4 py-2 rounded mb-4"
                                 onClick={() => handleClearAllSeats(selectedBus)}
@@ -199,7 +195,7 @@ const Payment = () => {
                                         <th className="px-4 py-2">Counter</th>
                                         <th className="px-4 py-2">Reference</th>
                                         <th className="px-4 py-2">Email</th>
-                                        <th className="px-4 py-2">Action</th> {/* Add Action column */}
+                                        <th className="px-4 py-2">Action</th> 
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -229,6 +225,7 @@ const Payment = () => {
                                             </tr>
                                         ))
                                     ))}
+
                                 </tbody>
                             </table>
                         </div>
@@ -237,15 +234,8 @@ const Payment = () => {
                     )}
 
                     <div className="mt-10 flex flex-col md:flex-row items-center gap-10">
-                        <div className="px-10 py-5 rounded-xl border border-primary text-[#E67529] bg-[#E675291A]">
-                            <h2 className="text-2xl font-bold">Total Price: {totalPrice} </h2>
-                        </div>
-                        <div className="px-10 py-5 rounded-xl border border-primary text-[#E67529] bg-[#E675291A]">
-                            <h2 className="text-2xl font-bold">Allocated Seats: {totalAllocatedSeats} </h2>
-                        </div>
-                        <div className="px-10 py-5 rounded-xl border border-primary text-[#E67529] bg-[#E675291A]">
-                            <h2 className="text-2xl font-bold">Available Seats: {totalSeat - totalAllocatedSeats} </h2>
-                        </div>
+                        <h3 className="text-lg">Total Allocated Seats: {totalAllocatedSeats}</h3>
+                        <h3 className="text-lg">Total Price: {totalPrice}</h3>
                     </div>
                 </div>
             )}
@@ -254,3 +244,4 @@ const Payment = () => {
 };
 
 export default Payment;
+

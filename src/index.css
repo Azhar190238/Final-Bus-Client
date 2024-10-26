@@ -102,7 +102,7 @@
 }
 
 .seat1 {
-    @apply bg-[#E675291A] border border-primary h-6 w-10 md:h-8 md:w-14 lg:h-16 lg:w-32 rounded-md flex items-center justify-center
+    @apply bg-[#E675291A] border border-primary h-6 w-10 md:h-8 md:w-14 lg:h-16 lg:w-36 rounded-md flex items-center justify-center
 } 
 
 .seat-text {

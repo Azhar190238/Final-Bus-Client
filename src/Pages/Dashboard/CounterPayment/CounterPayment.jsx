@@ -1,18 +1,32 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaBusAlt } from 'react-icons/fa';
+import { DatePicker } from 'antd';
+import moment from 'moment';
 
 const CounterPayment = () => {
     const [counterData, setCounterData] = useState([]);
     const [approvedMasters, setApprovedMasters] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState(true); // Loading state
-    const rowsPerPage = 15; // Show 15 rows per page
+    const [loading, setLoading] = useState(true);
+    const rowsPerPage = 15;
+    const dateFormatList = ['DD/MM/YYYY'];
+    const [selectedDate, setSelectedDate] = useState(moment().format('DD/MM/YYYY'));
+
+    const handleDateChange = (date) => {
+        const select = date ? date.format('DD/MM/YYYY') : moment().format('DD/MM/YYYY');
+        setSelectedDate(select);
+    };
+
+    const disableDates = (current) => {
+        const minDate = moment().subtract(15, 'days').startOf('day');
+        const maxDate = moment().add(15, 'days').endOf('day');
+        return current && (current < minDate || current > maxDate);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch approved counter master data with token verification
                 const mastersResponse = await axios.get('https://api.koyrabrtc.com/users', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -21,7 +35,6 @@ const CounterPayment = () => {
                 const masters = mastersResponse.data.filter(user => user.role === 'master' && user.status === 'approved');
                 setApprovedMasters(masters);
 
-                // Fetch counter data from the orders API
                 const counterResponse = await axios.get('https://api.koyrabrtc.com/orders', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -31,14 +44,13 @@ const CounterPayment = () => {
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
-                setLoading(false); // Stop loading once data is fetched
+                setLoading(false);
             }
         };
 
         fetchData();
     }, []);
 
-    // Helper function to calculate totals for a specific counter master
     const calculateTotals = (data) => {
         const totalSeats = data.reduce((sum, item) => sum + item.allocatedSeat.length, 0);
         const totalPrice = data.reduce((sum, item) => sum + item.price, 0);
@@ -50,7 +62,10 @@ const CounterPayment = () => {
     const currentMasters = approvedMasters.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
     const totalPages = Math.ceil(approvedMasters.length / rowsPerPage);
 
-    // Loading Spinner
+    const filteredOrders = counterData.filter(
+        order => order.date === selectedDate && order.status === 'paid'
+    );
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -65,10 +80,20 @@ const CounterPayment = () => {
     return (
         <div className="m-10">
             <h2 className="text-2xl font-semibold mb-4">Counter Master Details</h2>
+            
+            <div className="flex justify-center mt-5">
+                <DatePicker
+                    className="p-3 w-full md:w-1/2 lg:w-[20%]"
+                    onChange={handleDateChange}
+                    format={dateFormatList}
+                    disabledDate={disableDates}
+                    defaultValue={moment()}
+                />
+            </div>
 
             {approvedMasters.length > 0 ? (
                 <>
-                    <table className="table-auto w-full border-collapse border border-gray-300">
+                    <table className="table-auto w-full border-collapse border border-gray-300 mt-5">
                         <thead>
                             <tr>
                                 <th className="border border-gray-300 px-4 py-2">Counter Master Name</th>
@@ -81,7 +106,7 @@ const CounterPayment = () => {
                         </thead>
                         <tbody>
                             {currentMasters.map((master) => {
-                                const masterOrders = counterData.filter(order => order.counterMaster === master.name && order.status === 'paid');
+                                const masterOrders = filteredOrders.filter(order => order.counterMaster === master.name);
 
                                 if (masterOrders.length > 0) {
                                     const { totalSeats, totalPrice, buses, seats } = calculateTotals(masterOrders);
@@ -108,7 +133,6 @@ const CounterPayment = () => {
                         </tbody>
                     </table>
 
-                    {/* Pagination Controls */}
                     <div className="mt-4 flex justify-center space-x-2">
                         {Array.from({ length: totalPages }, (_, index) => (
                             <button
